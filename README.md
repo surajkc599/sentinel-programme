@@ -127,3 +127,4 @@ src/
 - **Vitest** — unit testing
 - **IndexedDB** — offline draft storage
 - **TypeScript** — strict type checking throughout
+- **Flexbox and Grid** - styling, responsive layout
