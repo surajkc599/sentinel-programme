@@ -1,1 +1,109 @@
-/* You can add global styles to this file, and also import other style files */
+@use '@angular/material' as mat;
+
+// ─── Material core + theme ───────────────────────────────────────────────────
+
+html {
+  @include mat.theme(
+    (
+      color: (
+        primary: mat.$azure-palette,
+        theme-type: light,
+      ),
+      typography: (
+        brand-family: 'Inter, sans-serif',
+        plain-family: 'Inter, sans-serif',
+      ),
+      density: 0,
+    )
+  );
+}
+
+// ─── Halcyon Capital Partners brand tokens ────────────────────────────────────
+
+:root {
+  // Colours
+  --color-primary: #1b2a4a;
+  --color-primary-light: #3d5a80;
+  --color-success: #2d6a4f;
+  --color-warning: #e09f3e;
+  --color-error: #9b2226;
+  --color-neutral: #6b7280;
+  --color-bg: #f8f9fa;
+  --color-card: #ffffff;
+  --color-text: #1f2937;
+
+  // Layout
+  --radius-card: 8px;
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --gap-card: 16px;
+  --padding-page: 24px;
+  --tap-target-min: 44px;
+
+  // Override Material system tokens with Halcyon brand
+  --mat-sys-primary: #1b2a4a;
+  --mat-sys-on-primary: #ffffff;
+  --mat-sys-secondary: #3d5a80;
+  --mat-sys-on-secondary: #ffffff;
+  --mat-sys-surface: #ffffff;
+  --mat-sys-on-surface: #1f2937;
+  --mat-sys-background: #f8f9fa;
+  --mat-sys-error: #9b2226;
+  --mat-sys-on-error: #ffffff;
+}
+
+// ─── Global base styles ───────────────────────────────────────────────────────
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  -webkit-font-smoothing: antialiased;
+}
+
+// ─── Typography scale ─────────────────────────────────────────────────────────
+
+h1 {
+  font-size: 26px;
+  font-weight: 700;
+  margin: 0;
+}
+
+h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.kpi-number {
+  font-size: 32px;
+  font-weight: 700;
+}
+
+// ─── Touch target enforcement ─────────────────────────────────────────────────
+
+button,
+a,
+[role='button'],
+mat-select,
+.mat-mdc-select,
+.mat-mdc-button {
+  min-height: var(--tap-target-min);
+  min-width: var(--tap-target-min);
+}
+
+// ─── Focus visible ────────────────────────────────────────────────────────────
+
+:focus-visible {
+  outline: 2px solid var(--color-primary-light);
+  outline-offset: 2px;
+}

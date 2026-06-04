@@ -1,0 +1,220 @@
+<div class="rm-view">
+  <!-- New Assessment Form -->
+  <section class="rm-view__form-section" aria-label="New client assessment">
+    <div class="rm-view__form-header">
+      <div>
+        <h1 class="rm-view__title">New Assessment</h1>
+        @if (!onlineStatus.isOnline()) {
+          <span class="rm-view__offline-badge">📶 OFFLINE — drafts saved locally</span>
+        } @else {
+          <span class="rm-view__online-indicator">✓ Online</span>
+        }
+      </div>
+      <div class="rm-view__live-risk" aria-live="polite" aria-label="Live risk classification">
+        <span class="rm-view__live-risk-label">Risk</span>
+        @if (formHasRiskContext()) {
+          <app-risk-badge [risk]="liveRisk()" />
+        } @else {
+          <span class="rm-view__risk-placeholder">—</span>
+        }
+      </div>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate class="rm-view__form">
+      <div class="rm-view__groups">
+        <!-- Group 1: Client Identity -->
+        <mat-card class="rm-view__group">
+          <mat-card-header>
+            <mat-card-title>Client Identity</mat-card-title>
+          </mat-card-header>
+          <mat-card-content class="rm-view__group-fields">
+            <mat-form-field appearance="outline">
+              <mat-label>Client Name</mat-label>
+              <input matInput formControlName="client_name" autocomplete="off" />
+              @if (submitted && form.get('client_name')?.invalid) {
+                @if (form.controls.client_name.hasError('required')) {
+                  <mat-error>Required</mat-error>
+                }
+                @if (form.controls.client_name.hasError('minlength')) {
+                  <mat-error>Minimum 2 characters</mat-error>
+                }
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Client Type</mat-label>
+              <mat-select formControlName="client_type">
+                @for (type of clientTypeOptions; track type) {
+                  <mat-option [value]="type">{{ type }}</mat-option>
+                }
+              </mat-select>
+              @if (submitted && form.get('client_type')?.invalid) {
+                <mat-error>Required</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Country of Tax Residence</mat-label>
+              <input matInput formControlName="country_of_tax_residence" autocomplete="off" />
+              @if (submitted && form.get('country_of_tax_residence')?.invalid) {
+                <mat-error>Required</mat-error>
+              }
+            </mat-form-field>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Group 2: Financial Profile -->
+        <mat-card class="rm-view__group">
+          <mat-card-header>
+            <mat-card-title>Financial Profile</mat-card-title>
+          </mat-card-header>
+          <mat-card-content class="rm-view__group-fields">
+            <mat-form-field appearance="outline">
+              <mat-label>Annual Income (GBP)</mat-label>
+              <input matInput type="number" formControlName="annual_income" min="1" />
+              @if (submitted && form.get('annual_income')?.invalid) {
+                @if (form.controls.annual_income.hasError('required')) {
+                  <mat-error>Required</mat-error>
+                }
+                @if (form.controls.annual_income.hasError('min')) {
+                  <mat-error>Must be greater than 0</mat-error>
+                }
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Source of Funds</mat-label>
+              <mat-select formControlName="source_of_funds">
+                @for (option of sourceOfFundsOptions; track option) {
+                  <mat-option [value]="option">{{ option }}</mat-option>
+                }
+              </mat-select>
+              @if (submitted && form.get('source_of_funds')?.invalid) {
+                <mat-error>Required</mat-error>
+              }
+            </mat-form-field>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Group 3: Screening Flags -->
+        <mat-card class="rm-view__group">
+          <mat-card-header>
+            <mat-card-title>Screening Flags</mat-card-title>
+          </mat-card-header>
+          <mat-card-content class="rm-view__group-fields rm-view__group-fields--toggles">
+            <div class="rm-view__toggle-row">
+              <span class="rm-view__toggle-label">PEP Status</span>
+              <mat-slide-toggle
+                formControlName="pep_status"
+                aria-label="Politically Exposed Person"
+              />
+            </div>
+
+            <div class="rm-view__toggle-row">
+              <span class="rm-view__toggle-label">Sanctions Screening Match</span>
+              <mat-slide-toggle
+                formControlName="sanctions_screening_match"
+                aria-label="Sanctions screening match"
+              />
+            </div>
+
+            <div class="rm-view__toggle-row">
+              <span class="rm-view__toggle-label">Adverse Media Flag</span>
+              <mat-slide-toggle
+                formControlName="adverse_media_flag"
+                aria-label="Adverse media flag"
+              />
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Group 4: Documentation -->
+        <mat-card class="rm-view__group">
+          <mat-card-header>
+            <mat-card-title>Documentation</mat-card-title>
+          </mat-card-header>
+          <mat-card-content class="rm-view__group-fields">
+            <mat-form-field appearance="outline">
+              <mat-label>ID Verification Date</mat-label>
+              <input
+                matInput
+                [matDatepicker]="idDatePicker"
+                formControlName="id_verification_date"
+              />
+              <mat-datepicker-toggle matIconSuffix [for]="idDatePicker" />
+              <mat-datepicker #idDatePicker />
+            </mat-form-field>
+
+            <div class="rm-view__toggle-row">
+              <span class="rm-view__toggle-label">Documentation Complete</span>
+              <mat-slide-toggle
+                formControlName="documentation_complete"
+                aria-label="Documentation complete"
+              />
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <!-- Auto-populated info -->
+      <div class="rm-view__auto-fields" aria-label="Auto-populated fields">
+        <span><strong>Branch:</strong> {{ userContext.activeBranch() }}</span>
+        <span><strong>RM:</strong> {{ userContext.activeRm() }}</span>
+        <span><strong>KYC Status:</strong> PENDING (on submission)</span>
+      </div>
+
+      <div class="rm-view__form-actions">
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          class="rm-view__submit-btn"
+          [attr.aria-label]="'Submit assessment for ' + (form.value.client_name || 'new client')"
+        >
+          Submit Assessment
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <mat-divider />
+
+  <!-- My Recent Submissions -->
+  <section class="rm-view__submissions" aria-label="My recent submissions">
+    <h2 class="rm-view__section-title">My Recent Submissions</h2>
+
+    @if (mySubmissions().length === 0) {
+      <p class="rm-view__empty">No submissions yet for {{ userContext.activeRm() }}.</p>
+    } @else {
+      <div
+        class="rm-view__table-wrapper"
+        role="region"
+        aria-label="Recent submissions table"
+        tabindex="0"
+      >
+        <table class="rm-view__table">
+          <thead>
+            <tr>
+              <th scope="col">Client Name</th>
+              <th scope="col">Risk</th>
+              <th scope="col">Status</th>
+              <th scope="col">Date</th>
+              <th scope="col">Branch</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (a of mySubmissions(); track trackById($index, a)) {
+              <tr>
+                <td>{{ a.client_name }}</td>
+                <td><app-risk-badge [risk]="a.computedRiskClassification" /></td>
+                <td><app-status-badge [kyc]="a.kyc_status" [sync]="a.syncStatus" /></td>
+                <td>{{ formatDate(a.submittedAt) }}</td>
+                <td>{{ a.branch }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+</div>

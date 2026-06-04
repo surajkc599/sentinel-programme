@@ -1,59 +1,129 @@
-# SentinelProgramme
+# SENTINEL — Client Onboarding Risk Assessment
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.14.
+A web application for UK wealth management firms that helps Relationship Managers log client assessments, automatically calculates risk classification, and gives Compliance Officers and Auditors a clear view of all submissions.
 
-## Development server
+---
 
-To start a local development server, run:
+## What you need before starting
 
-```bash
-ng serve
+You need two free tools installed on your computer:
+
+1. **Node.js** (version 18 or higher)
+   Download from: https://nodejs.org — choose the **LTS** version and run the installer.
+
+2. **Git** (to download the code)
+   Download from: https://git-scm.com
+
+To check if they are already installed, open a terminal (on Mac: **Terminal**, on Windows: **Command Prompt**) and type:
+
+```
+node --version
+npm --version
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+If you see version numbers, you are good to go.
 
-## Code scaffolding
+---
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Getting started
 
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+### Step 1 — Download the code
 
 ```bash
-ng generate --help
+git clone https://github.com/YOUR-USERNAME/sentinel-programme.git
+cd sentinel-programme
 ```
 
-## Building
+> Replace `YOUR-USERNAME` with the actual GitHub username.
 
-To build the project run:
+### Step 2 — Install dependencies
+
+This downloads all the libraries the app needs. Run it once after cloning.
 
 ```bash
-ng build
+npm install
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+### Step 3 — Start the app
 
 ```bash
-ng test
+npm start
 ```
 
-## Running end-to-end tests
+Then open your browser and go to:
 
-For end-to-end (e2e) testing, run:
+**http://localhost:4200**
+
+The app will reload automatically if you make any changes to the code.
+
+---
+
+## Switching roles
+
+The app has three roles you can switch between using the dropdown in the top-right corner:
+
+| Role                     | What they can do                                                           |
+| ------------------------ | -------------------------------------------------------------------------- |
+| **Relationship Manager** | Fill in and submit new client assessments                                  |
+| **Compliance Officer**   | Review submissions and approve, reject, or flag for enhanced due diligence |
+| **Auditor**              | Read-only view of all assessments for cross-checking and audit             |
+
+---
+
+## Offline support
+
+The app works without an internet connection. If you go offline:
+
+- Assessments are saved locally in your browser (IndexedDB)
+- They sync automatically when your connection returns
+- Offline drafts are shown with a **Draft (Offline)** status badge
+
+---
+
+## Running the tests
 
 ```bash
-ng e2e
+npm test
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+This runs the unit test suite (76 tests) covering the risk classification engine and assessment service.
 
-## Additional Resources
+---
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+## Building for production
+
+```bash
+npm run build
+```
+
+The optimised output is placed in the `dist/` folder, ready to be deployed to any static web host.
+
+---
+
+## Project structure (for developers)
+
+```
+src/
+├── app/
+│   ├── core/
+│   │   ├── models/          # Data types (Assessment, RiskClassification, etc.)
+│   │   └── services/        # Business logic, state management, offline sync
+│   ├── features/
+│   │   ├── rm/              # Relationship Manager view
+│   │   ├── compliance/      # Compliance Officer view
+│   │   └── auditor/         # Auditor view
+│   └── shared/
+│       └── components/      # Reusable UI components (RiskBadge, StatusBadge, etc.)
+└── assets/
+    └── data/                # Seed data (46 sample client records)
+```
+
+---
+
+## Tech stack
+
+- **Angular 21** — frontend framework
+- **Angular Material** — UI component library
+- **Vitest** — unit testing
+- **IndexedDB** — offline draft storage
+- **TypeScript** — strict type checking throughout

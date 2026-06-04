@@ -1,0 +1,315 @@
+<mat-sidenav-container class="auditor-view">
+  <!-- Main content area -->
+  <mat-sidenav-content>
+    <div class="auditor-view__content">
+      <!-- Findings Summary -->
+      <section class="auditor-view__findings-section" aria-label="Findings summary">
+        <h1 class="auditor-view__title">Audit Review</h1>
+        <div class="auditor-view__findings-grid">
+          <mat-card class="auditor-view__finding-card">
+            <mat-card-content>
+              <div class="auditor-view__finding-value">{{ totalCount() }}</div>
+              <div class="auditor-view__finding-label">Total Records</div>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card class="auditor-view__finding-card">
+            <mat-card-content>
+              <div class="auditor-view__finding-value">{{ highRiskCount() }}</div>
+              <div class="auditor-view__finding-label">HIGH Risk</div>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card class="auditor-view__finding-card auditor-view__finding-card--warning">
+            <mat-card-content>
+              <div class="auditor-view__finding-value">{{ integrityMismatchCount() }}</div>
+              <div class="auditor-view__finding-label">Integrity Mismatches</div>
+              <div class="auditor-view__finding-desc">Stored ≠ computed risk</div>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card class="auditor-view__finding-card auditor-view__finding-card--warning">
+            <mat-card-content>
+              <div class="auditor-view__finding-value">{{ incompleteCount() }}</div>
+              <div class="auditor-view__finding-label">Incomplete Records</div>
+              <div class="auditor-view__finding-desc">Missing required fields</div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </section>
+
+      <mat-divider />
+
+      <!-- Filters -->
+      <section class="auditor-view__filters-section">
+        <div class="auditor-view__filters">
+          <mat-form-field appearance="outline" class="auditor-view__filter">
+            <mat-label>Branch</mat-label>
+            <mat-select [value]="filterBranch()" (selectionChange)="filterBranch.set($event.value)">
+              <mat-option value="">All Branches</mat-option>
+              @for (b of branches(); track b) {
+                <mat-option [value]="b">{{ b }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="auditor-view__filter">
+            <mat-label>RM Name</mat-label>
+            <mat-select [value]="filterRm()" (selectionChange)="filterRm.set($event.value)">
+              <mat-option value="">All RMs</mat-option>
+              @for (rm of rmNames(); track rm) {
+                <mat-option [value]="rm">{{ rm }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </section>
+
+      <!-- Audit Table -->
+      <section class="auditor-view__table-section" aria-label="Audit table">
+        @if (filteredAssessments().length === 0) {
+          <div class="auditor-view__empty">No records match the filters.</div>
+        } @else {
+          <div
+            class="auditor-view__table-wrapper"
+            role="region"
+            aria-label="Audit records table"
+            tabindex="0"
+          >
+            <table mat-table [dataSource]="filteredAssessments()" class="auditor-view__table">
+              <!-- Client ID Column -->
+              <ng-container matColumnDef="client_id">
+                <th mat-header-cell *matHeaderCellDef scope="col">ID</th>
+                <td mat-cell *matCellDef="let a" class="auditor-view__id-cell">
+                  {{ a.client_id }}
+                </td>
+              </ng-container>
+
+              <!-- Client Name Column -->
+              <ng-container matColumnDef="client_name">
+                <th mat-header-cell *matHeaderCellDef scope="col">Client Name</th>
+                <td mat-cell *matCellDef="let a">{{ a.client_name }}</td>
+              </ng-container>
+
+              <!-- Stored Risk Column -->
+              <ng-container matColumnDef="stored_risk">
+                <th mat-header-cell *matHeaderCellDef scope="col">Stored Risk</th>
+                <td mat-cell *matCellDef="let a" class="auditor-view__risk-cell">
+                  <span
+                    class="auditor-view__risk-badge"
+                    [class]="'auditor-view__risk-badge--' + a.risk_classification.toLowerCase()"
+                  >
+                    {{ a.risk_classification }}
+                  </span>
+                </td>
+              </ng-container>
+
+              <!-- Computed Risk Column -->
+              <ng-container matColumnDef="computed_risk">
+                <th mat-header-cell *matHeaderCellDef scope="col">Computed Risk</th>
+                <td mat-cell *matCellDef="let a" class="auditor-view__risk-cell">
+                  <span
+                    class="auditor-view__risk-badge"
+                    [class]="
+                      'auditor-view__risk-badge--' + a.computedRiskClassification.toLowerCase()
+                    "
+                  >
+                    {{ a.computedRiskClassification }}
+                  </span>
+                </td>
+              </ng-container>
+
+              <!-- Flags Column -->
+              <ng-container matColumnDef="flags">
+                <th mat-header-cell *matHeaderCellDef scope="col">Flags</th>
+                <td mat-cell *matCellDef="let a" class="auditor-view__flags-cell">
+                  <div class="auditor-view__flag">
+                    <mat-icon
+                      [class]="
+                        'auditor-view__flag-icon auditor-view__flag-icon--' +
+                        (getFlagIcon(a) === 'check_circle' ? 'clean' : 'warning')
+                      "
+                    >
+                      {{ getFlagIcon(a) }}
+                    </mat-icon>
+                    <span>{{ getFlagLabel(a) }}</span>
+                  </div>
+                </td>
+              </ng-container>
+
+              <!-- Submitted Date Column -->
+              <ng-container matColumnDef="submitted_date">
+                <th mat-header-cell *matHeaderCellDef scope="col">Submitted</th>
+                <td mat-cell *matCellDef="let a" class="auditor-view__date-cell">
+                  {{ formatDate(a.submittedAt) }}
+                </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayColumns"></tr>
+              <tr
+                mat-row
+                *matRowDef="let a; columns: displayColumns"
+                class="auditor-view__row"
+                [class.auditor-view__row--selected]="
+                  selectedAssessment()?.client_id === a.client_id
+                "
+                (click)="onSelectAssessment(a)"
+                role="button"
+                tabindex="0"
+                [attr.aria-label]="'View ' + a.client_id + ' audit details'"
+              ></tr>
+            </table>
+          </div>
+        }
+      </section>
+    </div>
+  </mat-sidenav-content>
+
+  <!-- Side Panel for Full Record Detail -->
+  <mat-sidenav
+    #detailPanel
+    position="end"
+    [opened]="!!selectedAssessment()"
+    (openedChange)="$event || selectedAssessment.set(null)"
+    mode="side"
+    class="auditor-view__panel"
+  >
+    @if (selectedAssessment(); as a) {
+      <div class="auditor-view__panel-header">
+        <div>
+          <h2 class="auditor-view__panel-title">{{ a.client_id }}</h2>
+          <p class="auditor-view__panel-subtitle">
+            {{ a.client_name }} · Assessed {{ formatDate(a.submittedAt) }}
+          </p>
+        </div>
+        <button mat-icon-button (click)="selectedAssessment.set(null)" aria-label="Close panel">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      <div class="auditor-view__panel-body">
+        <!-- Risk Comparison -->
+        <div class="auditor-view__panel-section">
+          <h3 class="auditor-view__panel-section-title">Risk Classification</h3>
+          <div class="auditor-view__risk-comparison">
+            <div class="auditor-view__risk-item">
+              <span class="auditor-view__risk-item-label">Stored</span>
+              <span
+                class="auditor-view__risk-badge auditor-view__risk-badge--inline"
+                [class]="'auditor-view__risk-badge--' + a.risk_classification.toLowerCase()"
+              >
+                {{ a.risk_classification }}
+              </span>
+            </div>
+            <div class="auditor-view__risk-item">
+              <span class="auditor-view__risk-item-label">Computed</span>
+              <span
+                class="auditor-view__risk-badge auditor-view__risk-badge--inline"
+                [class]="'auditor-view__risk-badge--' + a.computedRiskClassification.toLowerCase()"
+              >
+                {{ a.computedRiskClassification }}
+              </span>
+            </div>
+          </div>
+
+          @if (a.integrityMismatch) {
+            <div class="auditor-view__mismatch-warning">
+              <mat-icon>warning</mat-icon>
+              <div>
+                <strong>Mismatch Reason:</strong>
+                <p>{{ getMismatchReason(a) }}</p>
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Missing Fields -->
+        @if (a.missingFields.length > 0) {
+          <div class="auditor-view__panel-section">
+            <h3 class="auditor-view__panel-section-title">Missing Fields</h3>
+            <ul class="auditor-view__missing-list">
+              @for (field of a.missingFields; track field) {
+                <li>{{ field }}</li>
+              }
+            </ul>
+          </div>
+        }
+
+        <!-- All Fields -->
+        <div class="auditor-view__panel-section">
+          <h3 class="auditor-view__panel-section-title">All Fields</h3>
+          <div class="auditor-view__detail-rows">
+            <div class="auditor-view__detail-row">
+              <span class="auditor-view__detail-label">Client ID</span>
+              <span class="auditor-view__detail-value">{{ a.client_id }}</span>
+            </div>
+            <div class="auditor-view__detail-row">
+              <span class="auditor-view__detail-label">Name</span>
+              <span class="auditor-view__detail-value">{{ a.client_name }}</span>
+            </div>
+            <div class="auditor-view__detail-row">
+              <span class="auditor-view__detail-label">Type</span>
+              <span class="auditor-view__detail-value">{{ a.client_type }}</span>
+            </div>
+            <div class="auditor-view__detail-row">
+              <span class="auditor-view__detail-label">Country</span>
+              <span class="auditor-view__detail-value">{{ a.country_of_tax_residence }}</span>
+            </div>
+            <div class="auditor-view__detail-row">
+              <span class="auditor-view__detail-label">Annual Income</span>
+              <span class="auditor-view__detail-value">{{ formatCurrency(a.annual_income) }}</span>
+            </div>
+            <div class="auditor-view__detail-row">
+              <span class="auditor-view__detail-label">Source of Funds</span>
+              <span class="auditor-view__detail-value">{{ a.source_of_funds }}</span>
+            </div>
+            <div class="auditor-view__detail-row">
+              <span class="auditor-view__detail-label">PEP Status</span>
+              <span class="auditor-view__detail-value">{{ a.pep_status ? 'Yes' : 'No' }}</span>
+            </div>
+            <div class="auditor-view__detail-row">
+              <span class="auditor-view__detail-label">Sanctions Match</span>
+              <span class="auditor-view__detail-value">{{
+                a.sanctions_screening_match ? 'Yes' : 'No'
+              }}</span>
+            </div>
+            <div class="auditor-view__detail-row">
+              <span class="auditor-view__detail-label">Adverse Media</span>
+              <span class="auditor-view__detail-value">{{
+                a.adverse_media_flag ? 'Yes' : 'No'
+              }}</span>
+            </div>
+            <div class="auditor-view__detail-row">
+              <span class="auditor-view__detail-label">Documentation</span>
+              <span class="auditor-view__detail-value">{{
+                a.documentation_complete ? 'Complete' : 'Incomplete'
+              }}</span>
+            </div>
+            <div class="auditor-view__detail-row">
+              <span class="auditor-view__detail-label">ID Verified</span>
+              <span class="auditor-view__detail-value">{{
+                a.id_verification_date ? formatDate(a.id_verification_date) : '⚠ Missing'
+              }}</span>
+            </div>
+            <div class="auditor-view__detail-row">
+              <span class="auditor-view__detail-label">Branch</span>
+              <span class="auditor-view__detail-value">{{ a.branch }}</span>
+            </div>
+            <div class="auditor-view__detail-row">
+              <span class="auditor-view__detail-label">RM</span>
+              <span class="auditor-view__detail-value">{{ a.relationship_manager ?? '—' }}</span>
+            </div>
+            <div class="auditor-view__detail-row">
+              <span class="auditor-view__detail-label">Submitted</span>
+              <span class="auditor-view__detail-value">{{ formatDateTime(a.submittedAt) }}</span>
+            </div>
+            <div class="auditor-view__detail-row">
+              <span class="auditor-view__detail-label">KYC Status</span>
+              <span class="auditor-view__detail-value">{{ a.kyc_status }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  </mat-sidenav>
+</mat-sidenav-container>

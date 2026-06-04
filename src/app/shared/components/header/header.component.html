@@ -1,0 +1,46 @@
+<mat-toolbar class="header" role="banner">
+  <div class="header__brand">
+    <span class="header__brand-name">Halcyon</span>
+    <span class="header__brand-subtitle">SENTINEL Onboarding</span>
+  </div>
+
+  <div class="header__controls">
+    @if (userContext.isRmRole()) {
+      <button
+        type="button"
+        class="header__field"
+        [matMenuTriggerFor]="rmMenu"
+        aria-haspopup="listbox"
+        [attr.aria-label]="'Logged in as ' + userContext.activeRm()"
+      >
+        <span class="header__field-label">Logged in as</span>
+        <span class="header__field-value">{{ userContext.activeRm() }}</span>
+        <mat-icon class="header__field-arrow" aria-hidden="true">expand_more</mat-icon>
+      </button>
+      <mat-menu #rmMenu="matMenu">
+        @for (name of rmNames; track name) {
+          <button mat-menu-item (click)="userContext.setActiveRm(name)">{{ name }}</button>
+        }
+      </mat-menu>
+
+      <div class="header__divider" aria-hidden="true"></div>
+    }
+
+    <button
+      type="button"
+      class="header__field"
+      [matMenuTriggerFor]="roleMenu"
+      aria-haspopup="listbox"
+      [attr.aria-label]="'Current role: ' + activeRoleLabel()"
+    >
+      <span class="header__field-label">Role</span>
+      <span class="header__field-value">{{ activeRoleLabel() }}</span>
+      <mat-icon class="header__field-arrow" aria-hidden="true">expand_more</mat-icon>
+    </button>
+    <mat-menu #roleMenu="matMenu">
+      @for (role of roles; track role.value) {
+        <button mat-menu-item (click)="onRoleChange(role.value)">{{ role.label }}</button>
+      }
+    </mat-menu>
+  </div>
+</mat-toolbar>

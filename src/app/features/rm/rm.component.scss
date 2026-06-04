@@ -1,0 +1,223 @@
+.rm-view {
+  padding: var(--padding-page);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+// ── Form section ───────────────────────────────────────────────────────────────
+
+.rm-view__form-section {
+  margin-bottom: 32px;
+}
+
+.rm-view__form-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.rm-view__title {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.rm-view__offline-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 4px;
+  background-color: #fef3cd;
+  color: #92400e;
+  font-size: 12px;
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+.rm-view__online-indicator {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 4px;
+  background-color: #d1fae5;
+  color: var(--color-success);
+  font-size: 12px;
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+.rm-view__live-risk {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: var(--color-card);
+  border: 1px solid #e5e7eb;
+  border-radius: var(--radius-card);
+  padding: 8px 16px;
+  box-shadow: var(--shadow-card);
+}
+
+.rm-view__live-risk-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-neutral);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.rm-view__risk-placeholder {
+  font-size: 16px;
+  color: var(--color-neutral);
+  font-weight: 300;
+}
+
+// ── 2-column grid for the 4 groups ─────────────────────────────────────────────
+
+.rm-view__groups {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--gap-card);
+  margin-bottom: 20px;
+}
+
+.rm-view__group {
+  mat-card-header {
+    margin-bottom: 4px;
+
+    mat-card-title {
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--color-primary);
+    }
+  }
+}
+
+.rm-view__group-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 8px !important;
+
+  mat-form-field {
+    width: 100%;
+  }
+
+  &--toggles {
+    gap: 0;
+  }
+}
+
+// ── Toggle rows ─────────────────────────────────────────────────────────────────
+
+.rm-view__toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 44px;
+  padding: 6px 0;
+  border-bottom: 1px solid #f3f4f6;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.rm-view__toggle-label {
+  font-size: 14px;
+  color: var(--color-text);
+}
+
+// ── Auto-populated strip ────────────────────────────────────────────────────────
+
+.rm-view__auto-fields {
+  display: flex;
+  gap: 24px;
+  font-size: 13px;
+  color: var(--color-neutral);
+  background-color: #f8f9fa;
+  border: 1px solid #e5e7eb;
+  border-radius: var(--radius-card);
+  padding: 10px 16px;
+  margin-bottom: 20px;
+
+  strong {
+    color: var(--color-text);
+  }
+}
+
+// ── Submit button ───────────────────────────────────────────────────────────────
+
+.rm-view__form-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.rm-view__submit-btn {
+  min-width: 180px;
+  min-height: var(--tap-target-min);
+}
+
+// ── Recent submissions ──────────────────────────────────────────────────────────
+
+.rm-view__submissions {
+  margin-top: 32px;
+}
+
+.rm-view__section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 0 16px;
+}
+
+.rm-view__empty {
+  color: var(--color-neutral);
+  font-size: 14px;
+  padding: 16px 0;
+}
+
+.rm-view__table-wrapper {
+  overflow-x: auto;
+  border-radius: var(--radius-card);
+  border: 1px solid #e5e7eb;
+  background-color: var(--color-card);
+  box-shadow: var(--shadow-card);
+}
+
+.rm-view__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+
+  th {
+    background-color: #f9fafb;
+    color: var(--color-neutral);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 10px 16px;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #f3f4f6;
+    color: var(--color-text);
+    vertical-align: middle;
+  }
+
+  tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  tbody tr:hover td {
+    background-color: #f9fafb;
+  }
+}

@@ -1,0 +1,292 @@
+<mat-sidenav-container class="compliance-view">
+  <!-- Main content area -->
+  <mat-sidenav-content>
+    <div class="compliance-view__content">
+      <!-- KPI Summary Panel -->
+      <section class="compliance-view__kpi-section" aria-label="KPI summary">
+        <h1 class="compliance-view__title">Compliance Review</h1>
+        <div class="compliance-view__kpi-grid">
+          <mat-card class="compliance-view__kpi-card">
+            <mat-card-content>
+              <div class="compliance-view__kpi-value">
+                {{ assessmentService.assessments().length }}
+              </div>
+              <div class="compliance-view__kpi-label">Total Assessments</div>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card class="compliance-view__kpi-card">
+            <mat-card-content>
+              <div class="compliance-view__kpi-value">{{ assessmentService.highRiskCount() }}</div>
+              <div class="compliance-view__kpi-label">HIGH Risk</div>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card class="compliance-view__kpi-card">
+            <mat-card-content>
+              <div class="compliance-view__kpi-value">{{ assessmentService.pendingCount() }}</div>
+              <div class="compliance-view__kpi-label">Pending Review</div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </section>
+
+      <mat-divider />
+
+      <!-- Filters -->
+      <section class="compliance-view__filters-section">
+        <div class="compliance-view__filters">
+          <mat-form-field appearance="outline" class="compliance-view__filter">
+            <mat-label>Branch</mat-label>
+            <mat-select [value]="filterBranch()" (selectionChange)="filterBranch.set($event.value)">
+              <mat-option value="">All Branches</mat-option>
+              @for (b of branches(); track b) {
+                <mat-option [value]="b">{{ b }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="compliance-view__filter">
+            <mat-label>Risk Tier</mat-label>
+            <mat-select [value]="filterRisk()" (selectionChange)="filterRisk.set($event.value)">
+              <mat-option value="">All Tiers</mat-option>
+              <mat-option value="LOW">LOW</mat-option>
+              <mat-option value="MEDIUM">MEDIUM</mat-option>
+              <mat-option value="HIGH">HIGH</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="compliance-view__filter">
+            <mat-label>KYC Status</mat-label>
+            <mat-select
+              [value]="filterKycStatus()"
+              (selectionChange)="filterKycStatus.set($event.value)"
+            >
+              <mat-option value="">All Statuses</mat-option>
+              <mat-option value="PENDING">Pending</mat-option>
+              <mat-option value="APPROVED">Approved</mat-option>
+              <mat-option value="REJECTED">Rejected</mat-option>
+              <mat-option value="ENHANCED_DUE_DILIGENCE">EDD</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </section>
+
+      <!-- Assessment List Table -->
+      <section class="compliance-view__list-section" aria-label="Assessment list">
+        @if (filteredAssessments().length === 0) {
+          <div class="compliance-view__empty">No assessments match the filters.</div>
+        } @else {
+          <div
+            class="compliance-view__table-wrapper"
+            role="region"
+            aria-label="Assessments table"
+            tabindex="0"
+          >
+            <table mat-table [dataSource]="filteredAssessments()" class="compliance-view__table">
+              <!-- Client Name Column -->
+              <ng-container matColumnDef="client_name">
+                <th mat-header-cell *matHeaderCellDef scope="col">Client Name</th>
+                <td mat-cell *matCellDef="let a" class="compliance-view__name-cell">
+                  {{ a.client_name }}
+                </td>
+              </ng-container>
+
+              <!-- Branch Column -->
+              <ng-container matColumnDef="branch">
+                <th mat-header-cell *matHeaderCellDef scope="col">Branch</th>
+                <td mat-cell *matCellDef="let a">{{ a.branch }}</td>
+              </ng-container>
+
+              <!-- Risk Column -->
+              <ng-container matColumnDef="risk">
+                <th mat-header-cell *matHeaderCellDef scope="col">Risk</th>
+                <td mat-cell *matCellDef="let a">
+                  <app-risk-badge [risk]="a.computedRiskClassification" />
+                </td>
+              </ng-container>
+
+              <!-- KYC Status Column -->
+              <ng-container matColumnDef="kyc_status">
+                <th mat-header-cell *matHeaderCellDef scope="col">Status</th>
+                <td mat-cell *matCellDef="let a"><app-status-badge [kyc]="a.kyc_status" /></td>
+              </ng-container>
+
+              <!-- RM Column -->
+              <ng-container matColumnDef="rm">
+                <th mat-header-cell *matHeaderCellDef scope="col">RM</th>
+                <td mat-cell *matCellDef="let a">{{ a.relationship_manager ?? '—' }}</td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayColumns"></tr>
+              <tr
+                mat-row
+                *matRowDef="let a; columns: displayColumns; trackBy: trackByClientId"
+                class="compliance-view__row"
+                [class.compliance-view__row--selected]="
+                  selectedAssessment()?.client_id === a.client_id
+                "
+                (click)="onSelectAssessment(a)"
+                role="button"
+                tabindex="0"
+                [attr.aria-label]="'View ' + a.client_name + ' assessment details'"
+              ></tr>
+            </table>
+          </div>
+        }
+      </section>
+    </div>
+  </mat-sidenav-content>
+
+  <!-- Side Panel for Assessment Detail & Actions -->
+  <mat-sidenav
+    #detailPanel
+    position="end"
+    [opened]="!!selectedAssessment()"
+    (openedChange)="$event || selectedAssessment.set(null)"
+    mode="side"
+    class="compliance-view__panel"
+  >
+    @if (selectedAssessment(); as a) {
+      <div class="compliance-view__panel-header">
+        <div>
+          <h2 class="compliance-view__panel-title">{{ a.client_name }}</h2>
+          <p class="compliance-view__panel-subtitle">
+            {{ a.client_id }} · Assessed {{ formatDate(a.submittedAt) }}
+          </p>
+        </div>
+        <button mat-icon-button (click)="selectedAssessment.set(null)" aria-label="Close panel">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      <div class="compliance-view__panel-body">
+        <!-- Key Info Strip -->
+        <div class="compliance-view__panel-info">
+          <span
+            ><strong>Risk:</strong> <app-risk-badge [risk]="a.computedRiskClassification"
+          /></span>
+          @if (a.integrityMismatch) {
+            <span class="compliance-view__warning">⚠ Integrity mismatch detected</span>
+          }
+        </div>
+
+        <!-- Client Identity -->
+        <div class="compliance-view__panel-section">
+          <h3 class="compliance-view__panel-section-title">Client Identity</h3>
+          <div class="compliance-view__detail-rows">
+            <div class="compliance-view__detail-row">
+              <span class="compliance-view__detail-label">Name</span>
+              <span class="compliance-view__detail-value">{{ a.client_name }}</span>
+            </div>
+            <div class="compliance-view__detail-row">
+              <span class="compliance-view__detail-label">Type</span>
+              <span class="compliance-view__detail-value">{{ a.client_type }}</span>
+            </div>
+            <div class="compliance-view__detail-row">
+              <span class="compliance-view__detail-label">Country</span>
+              <span class="compliance-view__detail-value">{{ a.country_of_tax_residence }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Financial Profile -->
+        <div class="compliance-view__panel-section">
+          <h3 class="compliance-view__panel-section-title">Financial Profile</h3>
+          <div class="compliance-view__detail-rows">
+            <div class="compliance-view__detail-row">
+              <span class="compliance-view__detail-label">Annual Income</span>
+              <span class="compliance-view__detail-value">{{
+                formatCurrency(a.annual_income)
+              }}</span>
+            </div>
+            <div class="compliance-view__detail-row">
+              <span class="compliance-view__detail-label">Source of Funds</span>
+              <span class="compliance-view__detail-value">{{ a.source_of_funds }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Screening Flags -->
+        <div class="compliance-view__panel-section">
+          <h3 class="compliance-view__panel-section-title">Screening Flags</h3>
+          <div class="compliance-view__detail-rows">
+            <div class="compliance-view__detail-row">
+              <span class="compliance-view__detail-label">PEP Status</span>
+              <span class="compliance-view__detail-value">{{ a.pep_status ? 'Yes' : 'No' }}</span>
+            </div>
+            <div class="compliance-view__detail-row">
+              <span class="compliance-view__detail-label">Sanctions Match</span>
+              <span class="compliance-view__detail-value">{{
+                a.sanctions_screening_match ? 'Yes' : 'No'
+              }}</span>
+            </div>
+            <div class="compliance-view__detail-row">
+              <span class="compliance-view__detail-label">Adverse Media</span>
+              <span class="compliance-view__detail-value">{{
+                a.adverse_media_flag ? 'Yes' : 'No'
+              }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Area -->
+        <div class="compliance-view__panel-actions">
+          @if (isHighRisk(a)) {
+            <!-- HIGH Risk: Senior Sign-off Required -->
+            <mat-card class="compliance-view__edd-box">
+              <mat-card-title>
+                <mat-icon class="compliance-view__edd-icon">warning</mat-icon>
+                Senior Sign-off Required
+              </mat-card-title>
+              <mat-card-content>
+                <mat-checkbox [(ngModel)]="eddConfirmed" class="compliance-view__edd-checkbox">
+                  I confirm I have reviewed this assessment and authorise progression to APPROVED
+                  status
+                </mat-checkbox>
+              </mat-card-content>
+              <mat-card-footer class="compliance-view__edd-actions">
+                <button
+                  mat-raised-button
+                  color="primary"
+                  (click)="onConfirmHighRiskApproval()"
+                  [disabled]="!eddConfirmed()"
+                  class="compliance-view__action-btn"
+                >
+                  Confirm Approval
+                </button>
+                <button mat-stroked-button (click)="onReject()" class="compliance-view__action-btn">
+                  Reject
+                </button>
+              </mat-card-footer>
+            </mat-card>
+          } @else {
+            <!-- LOW / MEDIUM: Standard Actions -->
+            <div class="compliance-view__action-buttons">
+              <button
+                mat-raised-button
+                color="primary"
+                (click)="onApprove()"
+                class="compliance-view__action-btn"
+              >
+                Approve
+              </button>
+              <button mat-stroked-button (click)="onReject()" class="compliance-view__action-btn">
+                Reject
+              </button>
+              @if (a.computedRiskClassification === 'MEDIUM') {
+                <button
+                  mat-stroked-button
+                  (click)="onEscalateEdd()"
+                  class="compliance-view__action-btn"
+                >
+                  Escalate to EDD
+                </button>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </mat-sidenav>
+</mat-sidenav-container>

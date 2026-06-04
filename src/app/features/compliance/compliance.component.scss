@@ -1,0 +1,313 @@
+mat-sidenav-container {
+  height: calc(100vh - 64px);
+}
+
+.compliance-view__content {
+  padding: var(--padding-page);
+  max-width: 1400px;
+  margin: 0 auto;
+  overflow-y: auto;
+}
+
+// ── Title ───────────────────────────────────────────────────────────────────────
+
+.compliance-view__title {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0 0 20px;
+}
+
+// ── KPI Panel ───────────────────────────────────────────────────────────────────
+
+.compliance-view__kpi-section {
+  margin-bottom: 24px;
+}
+
+.compliance-view__kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--gap-card);
+}
+
+.compliance-view__kpi-card {
+  text-align: center;
+  box-shadow: var(--shadow-card);
+
+  mat-card-content {
+    padding: 16px !important;
+  }
+}
+
+.compliance-view__kpi-value {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 8px;
+}
+
+.compliance-view__kpi-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-neutral);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+// ── Filters ──────────────────────────────────────────────────────────────────────
+
+.compliance-view__filters-section {
+  margin-bottom: 16px;
+}
+
+.compliance-view__filters {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.compliance-view__filter {
+  flex: 0 1 200px;
+}
+
+// ── Assessment List ──────────────────────────────────────────────────────────────
+
+.compliance-view__list-section {
+  margin-bottom: 24px;
+}
+
+.compliance-view__empty {
+  color: var(--color-neutral);
+  font-size: 14px;
+  padding: 32px 16px;
+  text-align: center;
+  background-color: var(--color-bg);
+  border-radius: var(--radius-card);
+}
+
+.compliance-view__table-wrapper {
+  overflow-x: auto;
+  border-radius: var(--radius-card);
+  border: 1px solid #e5e7eb;
+  background-color: var(--color-card);
+  box-shadow: var(--shadow-card);
+}
+
+.compliance-view__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+
+  th {
+    background-color: #f9fafb;
+    color: var(--color-neutral);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 10px 16px;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #f3f4f6;
+    color: var(--color-text);
+    vertical-align: middle;
+  }
+
+  tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  tbody tr:hover td {
+    background-color: #f9fafb;
+  }
+}
+
+.compliance-view__row {
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+
+  &--selected td {
+    background-color: #eff6ff;
+  }
+}
+
+.compliance-view__name-cell {
+  font-weight: 500;
+  color: var(--color-primary);
+}
+
+// ── Side Panel ───────────────────────────────────────────────────────────────────
+
+mat-sidenav {
+  width: 480px !important;
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.12);
+}
+
+.compliance-view__panel {
+  background-color: var(--color-card);
+  display: flex;
+  flex-direction: column;
+}
+
+.compliance-view__panel-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid #e5e7eb;
+  background-color: #f9fafb;
+}
+
+.compliance-view__panel-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.compliance-view__panel-subtitle {
+  font-size: 12px;
+  color: var(--color-neutral);
+  margin: 2px 0 0;
+}
+
+.compliance-view__panel-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 20px;
+}
+
+.compliance-view__panel-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 13px;
+  margin-bottom: 16px;
+  padding: 12px;
+  background-color: #f9fafb;
+  border-radius: 6px;
+
+  strong {
+    font-weight: 600;
+  }
+}
+
+.compliance-view__warning {
+  color: #b45309;
+  font-weight: 500;
+}
+
+.compliance-view__panel-section {
+  margin-bottom: 16px;
+}
+
+.compliance-view__panel-section-title {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--color-primary);
+  margin: 0 0 8px;
+}
+
+.compliance-view__detail-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.compliance-view__detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid #f3f4f6;
+  font-size: 13px;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.compliance-view__detail-label {
+  font-weight: 500;
+  color: var(--color-neutral);
+  flex-shrink: 0;
+}
+
+.compliance-view__detail-value {
+  color: var(--color-text);
+  text-align: right;
+  flex: 1;
+}
+
+// ── Action Area ──────────────────────────────────────────────────────────────────
+
+.compliance-view__panel-actions {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.compliance-view__action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.compliance-view__action-btn {
+  width: 100%;
+  min-height: 40px;
+  justify-content: center;
+}
+
+// ── EDD Sign-off Box ─────────────────────────────────────────────────────────────
+
+.compliance-view__edd-box {
+  border: 2px solid #fbbf24;
+  background-color: #fef3c7;
+
+  mat-card-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #92400e;
+    margin: 0 !important;
+  }
+
+  mat-card-content {
+    padding: 12px 0 !important;
+  }
+}
+
+.compliance-view__edd-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  color: #b45309;
+}
+
+.compliance-view__edd-checkbox {
+  font-size: 13px !important;
+  color: #1f2937;
+
+  ::ng-deep .mdc-checkbox__native-control {
+    min-width: 40px;
+    min-height: 40px;
+  }
+}
+
+.compliance-view__edd-actions {
+  padding: 8px 0 0 !important;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}

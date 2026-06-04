@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "skills": {
+    "git-guardrails-claude-code": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "skillPath": "skills/misc/git-guardrails-claude-code/SKILL.md",
+      "computedHash": "a04bf71be9abc44ca3b00e2f1740b37d2e471abadd20d43a31bccff7135baedf"
+    },
+    "grill-me": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "skillPath": "skills/productivity/grill-me/SKILL.md",
+      "computedHash": "daf64ca15f4fa081a6747766db538e2dbd1131725ed4fcdd3d538dc62c7035ba"
+    },
+    "request-refactor-plan": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "skillPath": "skills/deprecated/request-refactor-plan/SKILL.md",
+      "computedHash": "6811250488d1dafcb111e7ef0dc1124211369c5f6f47ce820b7527c255489178"
+    },
+    "review": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "skillPath": "skills/in-progress/review/SKILL.md",
+      "computedHash": "fc4ca8a9495e93692282bebeb3bc99a6d46e27e2fccf4730001df98451b72f80"
+    },
+    "setup-pre-commit": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "skillPath": "skills/misc/setup-pre-commit/SKILL.md",
+      "computedHash": "f2ce8663857d919cf7e4146cd716b0aee1757b85123b758e6e7d98fcbaf14054"
+    }
+  }
+}

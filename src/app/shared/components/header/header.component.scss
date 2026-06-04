@@ -1,0 +1,114 @@
+.header {
+  background-color: var(--color-primary);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--padding-page);
+  height: 64px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.header__brand {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.header__brand-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.3px;
+}
+
+.header__brand-subtitle {
+  font-size: 11px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.6);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.header__controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.header__divider {
+  width: 1px;
+  height: 28px;
+  background-color: rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
+  margin: 0 4px;
+}
+
+// Custom selector button — replaces mat-form-field on dark header
+.header__field {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto auto;
+  align-items: center;
+  column-gap: 8px;
+  padding: 7px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 6px;
+  background-color: rgba(255, 255, 255, 0.06);
+  cursor: pointer;
+  color: #ffffff;
+  font-family: inherit;
+  min-width: 160px;
+  text-align: left;
+  appearance: none;
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease;
+
+  &:hover {
+    border-color: rgba(255, 255, 255, 0.5);
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  &:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, 0.8);
+    outline-offset: 2px;
+    border-color: transparent;
+  }
+}
+
+.header__field-label {
+  grid-column: 1;
+  grid-row: 1;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1;
+}
+
+.header__field-value {
+  grid-column: 1;
+  grid-row: 2;
+  font-size: 13px;
+  font-weight: 500;
+  color: #ffffff;
+  line-height: 1.3;
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.header__field-arrow {
+  grid-column: 2;
+  grid-row: 1 / 3;
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: rgba(255, 255, 255, 0.65);
+}

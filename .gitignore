@@ -1,44 +1,60 @@
-# See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
+# ── Dependencies ───────────────────────────────────────────────────────────────
+node_modules/
 
-# Compiled output
-/dist
-/tmp
-/out-tsc
+# ── Build output ────────────────────────────────────────────────────────────────
+dist/
+tmp/
+out-tsc/
+
+# ── Angular cache ───────────────────────────────────────────────────────────────
+.angular/
+
+# ── Test & coverage output ──────────────────────────────────────────────────────
+coverage/
 /bazel-out
 
-# Node
-/node_modules
-npm-debug.log
-yarn-error.log
+# ── Environment / secrets ───────────────────────────────────────────────────────
+.env
+.env.*
+!.env.example
 
-# IDEs and editors
+# ── Logs ────────────────────────────────────────────────────────────────────────
+*.log
+npm-debug.log*
+yarn-error.log*
+yarn-debug.log*
+
+# ── IDEs ────────────────────────────────────────────────────────────────────────
 .idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sublime-workspace
 .project
 .classpath
 .c9/
 *.launch
 .settings/
-*.sublime-workspace
 
-# Visual Studio Code
+# ── VS Code (keep shared settings, ignore personal/local overrides) ─────────────
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
 !.vscode/mcp.json
-.history/*
+.history/
 
-# Miscellaneous
-/.angular/cache
-.sass-cache/
-/connect.lock
-/coverage
-/libpeerconnection.log
-testem.log
-/typings
-__screenshots__/
-
-# System files
+# ── OS files ────────────────────────────────────────────────────────────────────
 .DS_Store
 Thumbs.db
+desktop.ini
+
+# ── Miscellaneous ───────────────────────────────────────────────────────────────
+.sass-cache/
+connect.lock
+libpeerconnection.log
+testem.log
+typings/
+__screenshots__/
